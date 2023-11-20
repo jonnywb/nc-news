@@ -46,6 +46,62 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/articles", () => {
+  test("should return status 200 and body.articles should be an array", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+      });
+  });
+
+  test("should return array with length of 13", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+      });
+  });
+
+  test("all items in array should be objects with the correct article properties -> (no body property)", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+          expect(article.body).toBe(undefined);
+        });
+      });
+  });
+
+  test("comment_count should return correct number of comments for given article", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].comment_count).toBe("2");
+      });
+  });
+
+  test("items should be sorted by 'created_at' in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+
 describe("GET /api/articles/:article_id", () => {
   test("should return status code 200 and a single object on body.article with correct key/values", () => {
     return request(app)
