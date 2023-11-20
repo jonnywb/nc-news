@@ -193,3 +193,42 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should return 201 and object with correct properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          author: "butter_bridge",
+          body: "test",
+        });
+      });
+  });
+
+  test("should return 404 Not found if article not found", () => {
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 400 Bad Request if request object not valid", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: 1,
+        body: [],
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
