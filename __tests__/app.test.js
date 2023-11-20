@@ -46,6 +46,17 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/articles", () => {
+  test("should return status 200 and body.articles should be an array", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+      });
+  });
+});
+
 describe("GET *", () => {
   test("should return 404 error 'not found' if incorrect path", () => {
     return request(app)

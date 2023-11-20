@@ -9,6 +9,8 @@ app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 
+app.get("/api/articles");
+
 app.all("*", handle404);
 
 app.use(handleServerError);
