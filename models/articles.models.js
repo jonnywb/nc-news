@@ -7,6 +7,8 @@ exports.selectArticles = () => {
     )
     .then(({ rows }) => {
       return rows;
+    });
+};
 
 exports.selectArticleById = (article_id) => {
   return db

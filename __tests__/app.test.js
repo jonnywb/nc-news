@@ -101,6 +101,9 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
 
 describe("GET /api/articles/:article_id", () => {
   test("should return status code 200 and a single object on body.article with correct key/values", () => {
