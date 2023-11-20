@@ -72,30 +72,6 @@ describe("GET /api", () => {
     })
     .flat();
 
-  test("should return 200 status code", () => {
-    return request(app).get("/api").expect(200);
-  });
-
-  test("should return an object on body.endpoints", () => {
-    return request(app)
-      .get("/api")
-      .expect(200)
-      .then(({ body }) => {
-        expect(typeof body.endpoints).toBe("object");
-      });
-  });
-
-  test("should return an object for currently available endpoints", () => {
-    return request(app)
-      .get("/api")
-      .expect(200)
-      .then(({ body }) => {
-        endpoints.forEach((endpoint) => {
-          expect(typeof body.endpoints[endpoint]).toBe("object");
-        });
-      });
-  });
-
   test("each available endpoint should have object with desc., queries, exampleResponse and exampleRequest(if needed)", () => {
     return request(app)
       .get("/api")
