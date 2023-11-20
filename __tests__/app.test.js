@@ -47,11 +47,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("should return statusCode 200", () => {
-    return request(app).get("/api/articles/1").expect(200);
-  });
-
-  test("should return a single object on body.article with correct key/values", () => {
+  test("should return status code 200 and a single object on body.article with correct key/values", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
