@@ -3,7 +3,10 @@ const app = express();
 
 const { getTopics } = require("./controllers/topics.controllers");
 const { getArticleById } = require("./controllers/articles.controllers");
-const { handle404, handleServerError, handleCustomError, handlePsqlError } = require("./error");
+const { handle404, handleCustomError, handlePsqlError, handleServerError } = require("./error");
+const { getApi } = require("./controllers/api.controllers");
+
+app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 
