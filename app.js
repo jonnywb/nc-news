@@ -3,6 +3,9 @@ const app = express();
 
 const { getTopics } = require("./controllers/topics.controllers");
 const { handle404, handleServerError } = require("./error");
+const { getApi } = require("./controllers/api.controllers");
+
+app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 
