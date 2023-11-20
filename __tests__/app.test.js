@@ -190,6 +190,15 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
+  test("should return empty array if article exists, but no comments on article", () => {
+    return request(app)
+      .get("/api/articles/13/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+
   test("should return 404 if article_id not found", () => {
     return request(app)
       .get("/api/articles/9999/comments")
