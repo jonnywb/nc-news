@@ -86,6 +86,15 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test("comment_count should return correct number of comments for given article", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].comment_count).toBe("2");
+      });
+  });
+
   test("items should be sorted by 'created_at' in descending order", () => {
     return request(app)
       .get("/api/articles")
