@@ -46,6 +46,49 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/articles/:article_id", () => {
+  test("should return statusCode 200", () => {
+    return request(app).get("/api/articles/1").expect(200);
+  });
+
+  test("should return a single object on body.article with correct key/values", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("should return 404 if article with id not present", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 if invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/HelloThere")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
 describe("GET *", () => {
   test("should return 404 error 'not found' if incorrect path", () => {
     return request(app)
