@@ -55,6 +55,43 @@ describe("GET /api/articles", () => {
         expect(Array.isArray(body.articles)).toBe(true);
       });
   });
+
+  test("should return array with length of 13", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+      });
+  });
+
+  test("all items in array should be objects with the correct article properties -> (no body property)", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+          });
+          expect(article.body).toBe(undefined);
+        });
+      });
+  });
+
+  test("items should be sorted by 'created_at' in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
 });
 
 describe("GET *", () => {
