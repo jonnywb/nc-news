@@ -59,6 +59,42 @@
       ]
     }
   },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the votes value of a chosen article",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Living in the shadow of a great coder",
+          "topic": "mabel",
+          "author": "coder_norf",
+          "body": "northcoders wuz ere",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 420,
+          "article_img_url": "http://images.some.url/path"
+        }
+      ]
+    },
+    "exampleRequest": {
+      "inc_votes": 3
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment to article given using article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "author": "bobby_b",
+        "body": "GET ME WINE, BOY!"
+      }
+    },
+    "exampleRequest": {
+      "username": "bobby_b",
+      "body": "GET ME WINE, BOY!"
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a comment using provided comment_id",
     "queries": [],

@@ -268,6 +268,119 @@ describe("GET /api", () => {
   });
 });
 
+describe("PATCH /api/articles/:article_id", () => {
+  test("should return status code 200 and respond with updated article object", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 3 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 103,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("should return 400 Bad Request if bad article_id", () => {
+    return request(app)
+      .patch("/api/articles/uwotm8")
+      .send({ inc_votes: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 404 not found if article_id doesn't exist", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({ inc_votes: 3 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if invalid request body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "I'm not wearing hockey pads" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should return 201 and object with correct properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          author: "butter_bridge",
+          body: "test",
+        });
+      });
+  });
+
+  test("should return 404 Not Found if article not found", () => {
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if invalid article_id", () => {
+    return request(app)
+      .post("/api/articles/obi/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 404 Not Found if username not valid", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: 1,
+        body: "test",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if request object has missing properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        body: "test",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("should return 204 with no content", () => {
     return request(app)
