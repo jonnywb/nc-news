@@ -1,24 +1,18 @@
 const db = require("../db/connection");
 
-exports.selectComByArtId = (article_id) => {
-  return db
-    .query(
-      `
-    SELECT * FROM articles WHERE article_id = $1`,
-      [article_id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
-      return db
-        .query(
-          `
-        SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`,
-          [article_id]
-        )
-        .then(({ rows }) => {
-          return rows;
-        });
-    });
+exports.selectComments = (article_id) => {
+  const queryValues = [];
+
+  let baseQuery = "SELECT * FROM comments ";
+
+  if (article_id) {
+    queryValues.push(article_id);
+    baseQuery += "WHERE article_id = $1 ";
+  }
+
+  baseQuery += "ORDER BY created_at DESC";
+
+  return db.query(baseQuery + ";", queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
