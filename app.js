@@ -5,7 +5,7 @@ const { getTopics } = require("./controllers/topics.controllers");
 
 const { getArticles, getArticleById, patchArticleById } = require("./controllers/articles.controllers");
 
-const { postComment, getComByArtId } = require("./controllers/comments.controllers");
+const { postComment, getComByArtId, removeComment } = require("./controllers/comments.controllers");
 
 const { handle404, handleCustomError, handlePsqlError, handleServerError } = require("./error");
 
@@ -24,6 +24,8 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 app.get("/api/articles/:article_id/comments", getComByArtId);
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", removeComment);
 
 app.all("*", handle404);
 
