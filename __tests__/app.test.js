@@ -144,6 +144,80 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe("GET /api/articles/:article_id/comments", () => {
+  test("should return status 200 and body.comments should be an array", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+      });
+  });
+
+  test("should array of length 11 for article 1", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(11);
+      });
+  });
+
+  test("should return array of comment objects with correct properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+
+  test("comments should be served with most recent comment first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("should return empty array if article exists, but no comments on article", () => {
+    return request(app)
+      .get("/api/articles/13/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+
+  test("should return 404 if article_id not found", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 if article_id invalid", () => {
+    return request(app)
+      .get("/api/articles/GeneralKenobi/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
 describe("GET *", () => {
   test("should return 404 error 'not found' if incorrect path", () => {
     return request(app)
@@ -239,6 +313,67 @@ describe("PATCH /api/articles/:article_id", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "I'm not wearing hockey pads" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should return 201 and object with correct properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          author: "butter_bridge",
+          body: "test",
+        });
+      });
+  });
+
+  test("should return 404 Not Found if article not found", () => {
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if invalid article_id", () => {
+    return request(app)
+      .post("/api/articles/obi/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 404 Not Found if username not valid", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: 1,
+        body: "test",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if request object has missing properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        body: "test",
+      })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");

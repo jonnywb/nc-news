@@ -9,6 +9,22 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "article_img_url": "img_url_goes_here"
+        }
+      ]
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves up the article found using :article_id parametric endpoint",
     "queries": [],
@@ -27,18 +43,18 @@
       ]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all articles",
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments for provided article_id",
     "queries": [],
     "exampleResponse": {
-      "articles": [
+      "comments": [
         {
+          "comment_id": 5,
+          "body": "WILMAAA!",
           "article_id": 1,
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "article_img_url": "img_url_goes_here"
+          "author": "Fred",
+          "votes": 0,
+          "created_at": "2021-14-03T21:00:00.000Z"
         }
       ]
     }
@@ -62,6 +78,21 @@
     },
     "exampleRequest": {
       "inc_votes": 3
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment to article given using article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "author": "bobby_b",
+        "body": "GET ME WINE, BOY!"
+      }
+    },
+    "exampleRequest": {
+      "username": "bobby_b",
+      "body": "GET ME WINE, BOY!"
     }
   }
 }
