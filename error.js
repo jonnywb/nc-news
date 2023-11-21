@@ -3,9 +3,12 @@ exports.handle404 = (req, res) => {
 };
 
 exports.handlePsqlError = (err, req, res, next) => {
-  const badRequests = ["22P02", "23502", "23503"];
+  const badRequests = ["22P02", "23502"];
+  const notFound = ["23503"];
   if (badRequests.includes(err.code)) {
     res.status(400).send({ msg: "Bad Request" });
+  } else if (notFound.includes(err.code)) {
+    res.status(404).send({ msg: "Not Found" });
   } else {
     next(err);
   }
