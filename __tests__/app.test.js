@@ -440,6 +440,55 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("GET /api/articles >>> TOPIC", () => {
+  test("should return status 200 and array of articles with correct length", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(12);
+      });
+  });
+
+  test("should return an array of objects with correct properties", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "mitch",
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("should return status 404 and msg: not found if topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=music")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return an empty array if topic exists but no articles are associated", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id >>> COMMENT COUNT", () => {
   test("should return status 200 and an article with comment_count property of correct length", () => {
     return request(app)
