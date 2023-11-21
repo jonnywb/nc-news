@@ -9,6 +9,8 @@ const { postComment, getComByArtId } = require("./controllers/comments.controlle
 
 const { handle404, handleCustomError, handlePsqlError, handleServerError } = require("./error");
 
+const { getUsers } = require("./controllers/users.controllers");
+
 const { getApi } = require("./controllers/api.controllers");
 
 app.use(express.json());
@@ -24,6 +26,8 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 app.get("/api/articles/:article_id/comments", getComByArtId);
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.get("/api/users", getUsers);
 
 app.all("*", handle404);
 

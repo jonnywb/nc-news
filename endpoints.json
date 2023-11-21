@@ -94,5 +94,23 @@
       "username": "bobby_b",
       "body": "GET ME WINE, BOY!"
     }
+  },
+  "GET /api/users": {
+    "description": "returns an array of all user objects",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "margarine_dam",
+          "name": "johnny",
+          "avatar_url": "https://this.url/path"
+        },
+        {
+          "username": "username",
+          "name": "name",
+          "avatar_url": "https://this.url/path"
+        }
+      ]
+    }
   }
 }
