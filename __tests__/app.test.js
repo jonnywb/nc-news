@@ -218,6 +218,41 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("should return 200 and array object", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.users)).toBe(true);
+      });
+  });
+
+  test("should return array with correct length", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+      });
+  });
+
+  test("should return array of user objects with correct properties/values", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
 describe("GET *", () => {
   test("should return 404 error 'not found' if incorrect path", () => {
     return request(app)
@@ -458,3 +493,4 @@ describe("GET /api/articles >>> TOPIC", () => {
       });
   });
 });
+
