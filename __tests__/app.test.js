@@ -225,7 +225,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("should return 400 bad request if article_id doesn't exist", () => {
+  test("should return 404 not found if article_id doesn't exist", () => {
     return request(app)
       .patch("/api/articles/9999")
       .send({ inc_votes: 3 })
