@@ -228,6 +228,15 @@ describe("GET /api/users", () => {
       });
   });
 
+  test("should return array with correct length", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+      });
+  });
+
   test("should return array of user objects with correct properties/values", () => {
     return request(app)
       .get("/api/users")
