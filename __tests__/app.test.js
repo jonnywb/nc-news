@@ -267,3 +267,64 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should return 201 and object with correct properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          author: "butter_bridge",
+          body: "test",
+        });
+      });
+  });
+
+  test("should return 404 Not Found if article not found", () => {
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if invalid article_id", () => {
+    return request(app)
+      .post("/api/articles/obi/comments")
+      .send({ username: "butter_bridge", body: "test" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 404 Not Found if username not valid", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: 1,
+        body: "test",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if request object has missing properties", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        body: "test",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});

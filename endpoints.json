@@ -58,5 +58,20 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment to article given using article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "author": "bobby_b",
+        "body": "GET ME WINE, BOY!"
+      }
+    },
+    "exampleRequest": {
+      "username": "bobby_b",
+      "body": "GET ME WINE, BOY!"
+    }
   }
 }
