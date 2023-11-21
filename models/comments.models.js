@@ -16,7 +16,6 @@ exports.selectComments = (article_id) => {
     return rows;
   });
 };
-
 exports.insertComment = (article_id, newComment) => {
   return db
     .query(`INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *`, [
@@ -27,4 +26,12 @@ exports.insertComment = (article_id, newComment) => {
     .then(({ rows }) => {
       return rows[0];
     });
+};
+
+exports.deleteComment = (comment_id) => {
+  return db.query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [comment_id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+  });
 };
