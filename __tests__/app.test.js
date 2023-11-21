@@ -418,12 +418,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("should return 204 with no content", () => {
-    return request(app)
-      .delete("/api/comments/18")
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
-      });
+    return request(app).delete("/api/comments/18").expect(204);
   });
 
   test("should return 404 if comment_id doesn't exist", () => {
@@ -494,3 +489,13 @@ describe("GET /api/articles >>> TOPIC", () => {
   });
 });
 
+describe("GET /api/articles/:article_id >>> COMMENT COUNT", () => {
+  test("should return status 200 and an article with comment_count property of correct length", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe("11");
+      });
+  });
+});
