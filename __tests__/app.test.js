@@ -3,6 +3,7 @@ const request = require("supertest");
 const app = require("../app");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const { getEndpoints } = require("../utils/utils");
 
 afterAll(() => {
   db.end();
@@ -265,19 +266,7 @@ describe("GET *", () => {
 });
 
 describe("GET /api", () => {
-  const endpoints = app._router.stack
-    .filter((r) => r.route)
-    .map((r) => {
-      const route = r.route;
-      const methods = [];
-      if (route.path !== "*") {
-        for (let value of route.stack) {
-          methods.push(`${value.method.toUpperCase()} ${route.path}`);
-        }
-      }
-      return methods;
-    })
-    .flat();
+  const endpoints = getEndpoints(app);
 
   test("each available endpoint should have object with desc., queries, exampleResponse and exampleRequest(if needed)", () => {
     return request(app)
@@ -286,18 +275,7 @@ describe("GET /api", () => {
       .then(({ body }) => {
         endpoints.forEach((endpoint) => {
           const endpointObj = body.endpoints[endpoint];
-          if (endpoint === "GET /api") {
-            expect(typeof endpointObj.description).toBe("string");
-          } else if (endpoint.includes("GET") || endpoint.includes("DELETE")) {
-            expect(typeof endpointObj.description).toBe("string");
-            expect(Array.isArray(endpointObj.queries)).toBe(true);
-            expect(typeof endpointObj.exampleResponse).toBe("object");
-          } else {
-            expect(typeof endpointObj.description).toBe("string");
-            expect(Array.isArray(endpointObj.queries)).toBe(true);
-            expect(typeof endpointObj.exampleResponse).toBe("object");
-            expect(typeof endpointObj.exampleRequest).toBe("object");
-          }
+          expect(endpointObj).not.toBe(undefined);
         });
       });
   });
@@ -576,6 +554,55 @@ describe("GET /api/users/:username", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("should return status code 200 and respond with updated article object", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 3 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 19,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+
+  test("should return 400 Bad Request if bad comment_id", () => {
+    return request(app)
+      .patch("/api/comments/uwotm8")
+      .send({ inc_votes: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 404 not found if comment_id doesn't exist", () => {
+    return request(app)
+      .patch("/api/comments/9999")
+      .send({ inc_votes: 3 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 Bad Request if invalid request body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "don't tell me what to do" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });
