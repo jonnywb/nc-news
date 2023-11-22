@@ -6,7 +6,7 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [{ "topic": "topic", "description": "description" }]
     }
   },
   "GET /api/articles": {
@@ -16,11 +16,11 @@
       "articles": [
         {
           "article_id": 1,
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
+          "title": "title",
+          "topic": "topic",
+          "author": "author",
           "created_at": "2018-05-30T15:59:13.341Z",
-          "article_img_url": "img_url_goes_here"
+          "article_img_url": "http://images.some.url/path"
         }
       ]
     }
@@ -32,13 +32,13 @@
       "article": [
         {
           "article_id": 1,
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
+          "title": "title",
+          "topic": "topic",
+          "author": "author",
+          "body": "body",
           "created_at": "2020-07-09T20:11:00.000Z",
           "votes": 100,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          "article_img_url": "http://images.some.url/path"
         }
       ]
     }
@@ -49,10 +49,10 @@
     "exampleResponse": {
       "comments": [
         {
-          "comment_id": 5,
-          "body": "WILMAAA!",
+          "comment_id": 1,
+          "body": "body!",
           "article_id": 1,
-          "author": "Fred",
+          "author": "author",
           "votes": 0,
           "created_at": "2021-14-03T21:00:00.000Z"
         }
@@ -66,18 +66,18 @@
       "article": [
         {
           "article_id": 1,
-          "title": "Living in the shadow of a great coder",
-          "topic": "mabel",
-          "author": "coder_norf",
-          "body": "northcoders wuz ere",
+          "title": "title",
+          "topic": "topic",
+          "author": "author",
+          "body": "body",
           "created_at": "2020-07-09T20:11:00.000Z",
-          "votes": 420,
+          "votes": 1,
           "article_img_url": "http://images.some.url/path"
         }
       ]
     },
     "exampleRequest": {
-      "inc_votes": 3
+      "inc_votes": 1
     }
   },
   "POST /api/articles/:article_id/comments": {
@@ -86,13 +86,13 @@
     "exampleResponse": {
       "comment": {
         "comment_id": 1,
-        "author": "bobby_b",
-        "body": "GET ME WINE, BOY!"
+        "author": "author",
+        "body": "body"
       }
     },
     "exampleRequest": {
-      "username": "bobby_b",
-      "body": "GET ME WINE, BOY!"
+      "username": "username",
+      "body": "body"
     }
   },
   "DELETE /api/comments/:comment_id": {
@@ -106,8 +106,8 @@
     "exampleResponse": {
       "users": [
         {
-          "username": "margarine_dam",
-          "name": "johnny",
+          "username": "username",
+          "name": "name",
           "avatar_url": "https://this.url/path"
         },
         {
@@ -116,6 +116,15 @@
           "avatar_url": "https://this.url/path"
         }
       ]
+    }
+  },
+  "GET /api/users/:user_id": {
+    "description": "returns the specified user object",
+    "queries": [],
+    "exampleResponse": {
+      "username": "username",
+      "avatar_url": "https://this.url/path",
+      "name": "name"
     }
   }
 }

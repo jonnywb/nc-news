@@ -39,7 +39,7 @@ If you would like to clone this project to run on your own computer, please foll
 
 2. On your computer, using terminal, go to the directory where you would like to store the files.
 
-3. Type "git clone <[link](https://github.com/jonnywb/nc-news.git)>":
+3. Type "git clone <-link->", for example:
 
    > git clone https://github.com/jonnywb/nc-news.git
 
