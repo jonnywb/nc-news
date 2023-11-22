@@ -1,17 +1,41 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by, order) => {
+  // SELECT FROM JOIN ON
   let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
+    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
+  // WHERE
   const dbQueries = [];
-
   if (topic) {
     dbQueries.push(topic);
     baseQuery += "WHERE topic = $1 ";
   }
 
-  baseQuery += "GROUP BY articles.article_id ORDER BY articles.created_at DESC";
+  // GROUP BY
+  baseQuery += "GROUP BY articles.article_id ";
+
+  //ORDER BY (sort_by)
+  sort_by = sort_by || "created_at";
+  const validSortBy = ["article_id", "title", "topic", "author", "created_at", "votes"];
+
+  if (validSortBy.includes(sort_by)) {
+    baseQuery += `ORDER BY articles.${sort_by} `;
+  } else if (sort_by === "comment_count") {
+    baseQuery += "ORDER BY comment_count ";
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  // ASC / DESC (ORDER)
+  order = order || "desc";
+  if (order === "asc") {
+    baseQuery += "ASC;";
+  } else if (order === "desc") {
+    baseQuery += "DESC;";
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
 
   return db.query(baseQuery, dbQueries).then(({ rows }) => {
     return rows;

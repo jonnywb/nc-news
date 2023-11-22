@@ -499,3 +499,59 @@ describe("GET /api/articles/:article_id >>> COMMENT COUNT", () => {
       });
   });
 });
+
+describe("GET /api/articles >>> SORT", () => {
+  test("should be able to sort by... title", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+
+  test("should be able to sort by... topic, descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("topic", { descending: true });
+      });
+  });
+
+  test("should be able to sort by... author, ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("author", { descending: false });
+      });
+  });
+
+  test("should be able to sort by... comment_count, ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("comment_count", { descending: false, coerce: true });
+      });
+  });
+
+  test("should return error 400 Bad Request, if sort_by is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=drinksOrdered")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return error 400 Bad Request, if order is invalid", () => {
+    return request(app)
+      .get("/api/articles?order=Jaegerbombs")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
