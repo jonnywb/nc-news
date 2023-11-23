@@ -28,8 +28,8 @@ As this api currently serves json files, it may be easier to view using a chrome
 
 Recommended Versions:
 
-- Node: 20.8.0
-- Postgres: 8.7.3
+- Node: 18.13.0
+- Postgres: 15.4
 
 ### How to clone
 
