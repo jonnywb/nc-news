@@ -793,3 +793,38 @@ describe("GET /api/articles/:article_id/comments >>> LIMIT, PAGE", () => {
       });
   });
 });
+
+describe("POST /api/topics", () => {
+  test("should return status 201 and newly created topic obj", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "films", description: "a place to discuss any feature length film" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.topic).toMatchObject({
+          slug: "films",
+          description: "a place to discuss any feature length film",
+        });
+      });
+  });
+
+  test("should return status 400 if duplicate topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "mitch", description: "a place to discuss any feature length film" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return status 400 if invalid request object", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});

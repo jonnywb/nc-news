@@ -3,7 +3,7 @@ exports.handle404 = (req, res) => {
 };
 
 exports.handlePsqlError = (err, req, res, next) => {
-  const badRequests = ["22P02", "23502"];
+  const badRequests = ["22P02", "23502", "23505"];
   const notFound = ["23503"];
   if (badRequests.includes(err.code)) {
     res.status(400).send({ msg: "Bad Request" });

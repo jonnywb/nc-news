@@ -4,7 +4,6 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
       "topics": [{ "topic": "topic", "description": "description" }]
     }
@@ -28,7 +27,6 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves up the article found using :article_id parametric endpoint",
-    "queries": [],
     "exampleResponse": {
       "article": [
         {
@@ -62,7 +60,6 @@
   },
   "PATCH /api/articles/:article_id": {
     "description": "Updates the votes value of a chosen article",
-    "queries": [],
     "exampleResponse": {
       "article": [
         {
@@ -83,7 +80,6 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "posts a comment to article given using article_id",
-    "queries": [],
     "exampleResponse": {
       "comment": {
         "comment_id": 1,
@@ -97,13 +93,10 @@
     }
   },
   "DELETE /api/comments/:comment_id": {
-    "description": "deletes a comment using provided comment_id",
-    "queries": [],
-    "exampleResponse": {}
+    "description": "deletes a comment using provided comment_id"
   },
   "GET /api/users": {
     "description": "returns an array of all user objects",
-    "queries": [],
     "exampleResponse": {
       "users": [
         {
@@ -121,7 +114,6 @@
   },
   "GET /api/users/:username": {
     "description": "returns the specified user object",
-    "queries": [],
     "exampleResponse": {
       "username": "username",
       "avatar_url": "https://this.url/path",
@@ -130,7 +122,6 @@
   },
   "PATCH /api/comments/:comment_id": {
     "description": "Updates the votes value of a chosen comment",
-    "queries": [],
     "exampleResponse": {
       "comment": {
         "comment_id": 1,
@@ -145,7 +136,6 @@
   },
   "POST /api/articles": {
     "description": "Creates a new article",
-    "queries": [],
     "exampleResponse": {
       "article": {
         "article_id": 1,
@@ -160,6 +150,19 @@
       "body": "body",
       "topic": "topic",
       "article_img_url": "http://images.some.url/path"
+    }
+  },
+  "POST /api/topics": {
+    "description": "creates a new topic using request body",
+    "exampleRequest": {
+      "slug": "topic",
+      "description": "description"
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "topic",
+        "description": "description"
+      }
     }
   }
 }
