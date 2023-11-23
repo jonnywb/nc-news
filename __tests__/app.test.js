@@ -57,12 +57,12 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("should return array with length of 13", () => {
+  test("should return array with length of 10", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(10);
       });
   });
 
@@ -424,7 +424,7 @@ describe("GET /api/articles >>> TOPIC", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(12);
+        expect(body.articles.length).toBe(10);
       });
   });
 
@@ -670,6 +670,76 @@ describe("POST /api/articles", () => {
         topic: "feline",
         article_img_url: "http://images.some.url/path",
       })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles >>> LIMIT, PAGE", () => {
+  test("should return 10 articles (by default) on page 1, all with total_count property", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(10);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+            total_count: "13",
+          });
+        });
+      });
+  });
+
+  test("should return 3 articles on page 2 with limit set to 5", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(3);
+      });
+  });
+
+  test("should return 3 articles on page 4 with limit set to 3 WITH correct total_count (12)", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&limit=3&page=4")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(3);
+        expect(body.articles[0].total_count).toBe("12");
+      });
+  });
+
+  test("should return 400 Bad Request if limit is not a number", () => {
+    return request(app)
+      .get("/api/articles?limit=POTATO&p=3")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 400 Bad Request if p is not a number", () => {
+    return request(app)
+      .get("/api/articles?p=boilEmMashEm")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 400 Bad Request if limit is above 10", () => {
+    return request(app)
+      .get("/api/articles?limit=30")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");

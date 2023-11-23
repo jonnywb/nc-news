@@ -3,10 +3,7 @@ const { checkExists } = require("../utils/utils");
 
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
-  const { sort_by } = req.query;
-  const { order } = req.query;
-
-  const promiseArticles = [selectArticles(topic, sort_by, order)];
+  const promiseArticles = [selectArticles(req.query)];
 
   if (topic) {
     promiseArticles.push(checkExists("topics", "slug", topic));
@@ -51,7 +48,6 @@ exports.postArticle = (req, res, next) => {
       res.status(201).send({ article });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

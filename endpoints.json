@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -20,7 +20,8 @@
           "topic": "topic",
           "author": "author",
           "created_at": "2018-05-30T15:59:13.341Z",
-          "article_img_url": "http://images.some.url/path"
+          "article_img_url": "http://images.some.url/path",
+          "total_count": "1"
         }
       ]
     }

@@ -1,9 +1,17 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (topic, sort_by, order) => {
+exports.selectArticles = (query) => {
+  let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
   let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
+    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, COUNT(articles.article_id), subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
+
+  //SUBQUERY WHERE
+  if (topic) {
+    baseQuery += "WHERE topic = $1 ";
+  }
+
+  baseQuery += ") AS subquery ON true ";
 
   // WHERE
   const dbQueries = [];
@@ -13,7 +21,7 @@ exports.selectArticles = (topic, sort_by, order) => {
   }
 
   // GROUP BY
-  baseQuery += "GROUP BY articles.article_id ";
+  baseQuery += "GROUP BY articles.article_id, subquery.total_count ";
 
   //ORDER BY (sort_by)
   sort_by = sort_by || "created_at";
@@ -30,12 +38,27 @@ exports.selectArticles = (topic, sort_by, order) => {
   // ASC / DESC (ORDER)
   order = order || "desc";
   if (order === "asc") {
-    baseQuery += "ASC;";
+    baseQuery += "ASC ";
   } else if (order === "desc") {
-    baseQuery += "DESC;";
+    baseQuery += "DESC ";
   } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
+
+  // LIMIT
+  limit = limit || 10;
+  if (!Number(limit) || limit > 10) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  // OFFSET
+  p = p || 1;
+  if (!Number(p)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  let offset = limit * (p - 1);
+
+  baseQuery += `LIMIT ${limit} OFFSET ${offset};`;
 
   return db.query(baseQuery, dbQueries).then(({ rows }) => {
     return rows;
