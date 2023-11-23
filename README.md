@@ -75,6 +75,6 @@ To run tests in terminal, type:
 
 > npm test app
 
-- or to test the untils file:
+- or to test the utils file:
 
   > npm test utils
