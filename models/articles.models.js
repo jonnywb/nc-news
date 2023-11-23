@@ -75,3 +75,21 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return rows[0];
     });
 };
+
+exports.insertArticle = (newArticle) => {
+  const { author, title, body, topic, image } = newArticle;
+  return db
+    .query(
+      `WITH insert_article AS (
+        INSERT INTO articles (title, topic, author, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *
+      )
+      SELECT insert_article.article_id, insert_article.votes, insert_article.created_at, COUNT(comment_id) AS comment_count 
+      FROM insert_article
+      LEFT JOIN comments on comments.article_id = insert_article.article_id
+      GROUP BY insert_article.article_id, insert_article.votes, insert_article.created_at;`,
+      [title, topic, author, body, image]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

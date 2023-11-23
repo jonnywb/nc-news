@@ -50,7 +50,7 @@
       "comments": [
         {
           "comment_id": 1,
-          "body": "body!",
+          "body": "body",
           "article_id": 1,
           "author": "author",
           "votes": 0,
@@ -141,5 +141,24 @@
       }
     },
     "exampleRequest": { "inc_votes": 1 }
+  },
+  "POST /api/articles": {
+    "description": "Creates a new article",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "votes": 0,
+        "created_at": "TIME",
+        "comment_count": 0
+      }
+    },
+    "exampleRequest": {
+      "author": "author",
+      "title": "title",
+      "body": "body",
+      "topic": "topic",
+      "article_img_url": "http://images.some.url/path"
+    }
   }
 }

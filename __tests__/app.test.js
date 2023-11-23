@@ -606,3 +606,73 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("should return 201 and created object with correct properties", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        title: "Dogs are way better",
+        body: "Let's just accept it, people.",
+        topic: "cats",
+        article_img_url: "http://images.some.url/path",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 14,
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: "0",
+        });
+      });
+  });
+
+  test("should return 404 if username 'Not Found'", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "tim",
+        title: "Dogs are way better",
+        body: "Let's just accept it, people.",
+        topic: "cats",
+        article_img_url: "http://images.some.url/path",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 404 if topic 'Not Found'", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        title: "Dogs are way better",
+        body: "Let's just accept it, people.",
+        topic: "feline",
+        article_img_url: "http://images.some.url/path",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 if invalid request object", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        body: "Let's just accept it, people.",
+        topic: "feline",
+        article_img_url: "http://images.some.url/path",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
