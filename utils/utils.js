@@ -14,15 +14,15 @@ exports.checkExists = (table, column, value) => {
 exports.getEndpoints = (app) => {
   const endpoints = expressListEndpoints(app);
 
-  return endpoints
-    .filter((endpoint) => endpoint.path !== "*")
-    .reduce((endpointArr, val) => {
-      const newEndpoints = [];
+  return endpoints.reduce((endpointArr, val) => {
+    const newEndpoints = [];
+    if (val.path !== "*") {
       val.methods.forEach((method) => {
         const endpointStr = `${method} ${val.path}`;
         newEndpoints.push(endpointStr);
       });
+    }
 
-      return endpointArr.concat(newEndpoints);
-    }, []);
+    return endpointArr.concat(newEndpoints);
+  }, []);
 };
