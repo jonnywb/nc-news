@@ -164,5 +164,8 @@
         "description": "description"
       }
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article using the provided article_id"
   }
 }
