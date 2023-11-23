@@ -4,14 +4,7 @@ exports.selectArticles = (query) => {
   let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
   let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, COUNT(articles.article_id), subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
-
-  //SUBQUERY WHERE
-  if (topic) {
-    baseQuery += "WHERE topic = $1 ";
-  }
-
-  baseQuery += ") AS subquery ON true ";
+    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
   // WHERE
   const dbQueries = [];
@@ -21,7 +14,7 @@ exports.selectArticles = (query) => {
   }
 
   // GROUP BY
-  baseQuery += "GROUP BY articles.article_id, subquery.total_count ";
+  baseQuery += "GROUP BY articles.article_id ";
 
   //ORDER BY (sort_by)
   sort_by = sort_by || "created_at";
@@ -122,5 +115,19 @@ exports.deleteArticle = (article_id) => {
     if (!rows.length) {
       return Promise.reject({ status: 404, msg: "Not Found" });
     }
+  });
+};
+
+exports.selectTotalCount = (topic) => {
+  let baseQuery = "SELECT COUNT(*) AS total_count FROM articles ";
+
+  const queryArr = [];
+  if (topic) {
+    queryArr.push(topic);
+    baseQuery += "WHERE topic = $1 ";
+  }
+
+  return db.query(baseQuery, queryArr).then(({ rows }) => {
+    return +rows[0].total_count;
   });
 };

@@ -4,12 +4,13 @@ const {
   updateArticleById,
   insertArticle,
   deleteArticle,
+  selectTotalCount,
 } = require("../models/articles.models");
 const { checkExists } = require("../utils/utils");
 
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
-  const promiseArticles = [selectArticles(req.query)];
+  const promiseArticles = [selectArticles(req.query), selectTotalCount(topic)];
 
   if (topic) {
     promiseArticles.push(checkExists("topics", "slug", topic));
@@ -17,7 +18,7 @@ exports.getArticles = (req, res, next) => {
 
   Promise.all(promiseArticles)
     .then((promiseResults) => {
-      res.status(200).send({ articles: promiseResults[0] });
+      res.status(200).send({ articles: promiseResults[0], total_count: promiseResults[1] });
     })
     .catch(next);
 };
