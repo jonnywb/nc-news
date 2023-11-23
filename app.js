@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 
-const apiRouter = require("./api-router");
+const apiRouter = require("./routes/api-router");
 
-const { handle404, handleCustomError, handlePsqlError, handleServerError } = require("./error");
+const { handle404, handleCustomError, handlePsqlError, handleServerError } = require("./controllers/error");
 
 app.use(express.json());
 
