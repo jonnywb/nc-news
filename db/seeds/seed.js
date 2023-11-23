@@ -1,10 +1,6 @@
-const format = require('pg-format');
-const db = require('../connection');
-const {
-  convertTimestampToDate,
-  createRef,
-  formatComments,
-} = require('./utils');
+const format = require("pg-format");
+const db = require("../connection");
+const { convertTimestampToDate, createRef, formatComments } = require("./utils");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -52,7 +48,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
-        article_id INT REFERENCES articles(article_id) NOT NULL,
+        article_id INT REFERENCES articles(article_id) ON DELETE CASCADE NOT NULL,
         author VARCHAR REFERENCES users(username) NOT NULL,
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
@@ -60,18 +56,14 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     })
     .then(() => {
       const insertTopicsQueryStr = format(
-        'INSERT INTO topics (slug, description) VALUES %L;',
+        "INSERT INTO topics (slug, description) VALUES %L;",
         topicData.map(({ slug, description }) => [slug, description])
       );
       const topicsPromise = db.query(insertTopicsQueryStr);
 
       const insertUsersQueryStr = format(
-        'INSERT INTO users ( username, name, avatar_url) VALUES %L;',
-        userData.map(({ username, name, avatar_url }) => [
-          username,
-          name,
-          avatar_url,
-        ])
+        "INSERT INTO users ( username, name, avatar_url) VALUES %L;",
+        userData.map(({ username, name, avatar_url }) => [username, name, avatar_url])
       );
       const usersPromise = db.query(insertUsersQueryStr);
 
@@ -80,37 +72,33 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {
       const formattedArticleData = articleData.map(convertTimestampToDate);
       const insertArticlesQueryStr = format(
-        'INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;',
-        formattedArticleData.map(
-          ({
-            title,
-            topic,
-            author,
-            body,
-            created_at,
-            votes = 0,
-            article_img_url,
-          }) => [title, topic, author, body, created_at, votes, article_img_url]
-        )
+        "INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;",
+        formattedArticleData.map(({ title, topic, author, body, created_at, votes = 0, article_img_url }) => [
+          title,
+          topic,
+          author,
+          body,
+          created_at,
+          votes,
+          article_img_url,
+        ])
       );
 
       return db.query(insertArticlesQueryStr);
     })
     .then(({ rows: articleRows }) => {
-      const articleIdLookup = createRef(articleRows, 'title', 'article_id');
+      const articleIdLookup = createRef(articleRows, "title", "article_id");
       const formattedCommentData = formatComments(commentData, articleIdLookup);
 
       const insertCommentsQueryStr = format(
-        'INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;',
-        formattedCommentData.map(
-          ({ body, author, article_id, votes = 0, created_at }) => [
-            body,
-            author,
-            article_id,
-            votes,
-            created_at,
-          ]
-        )
+        "INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;",
+        formattedCommentData.map(({ body, author, article_id, votes = 0, created_at }) => [
+          body,
+          author,
+          article_id,
+          votes,
+          created_at,
+        ])
       );
       return db.query(insertCommentsQueryStr);
     });
