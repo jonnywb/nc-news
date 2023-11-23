@@ -408,7 +408,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 
-  test("should return 400 bad request if bad commend_id", () => {
+  test("should return 400 bad request if bad comment_id", () => {
     return request(app)
       .delete("/api/comments/tomato")
       .expect(400)
@@ -822,6 +822,30 @@ describe("POST /api/topics", () => {
     return request(app)
       .post("/api/topics")
       .send({ description: "description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/articles/:article", () => {
+  test("should return 204 with no content", () => {
+    return request(app).delete("/api/articles/13").expect(204);
+  });
+
+  test("should return 404 if article_id doesn't exist", () => {
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("should return 400 bad request if bad article_id", () => {
+    return request(app)
+      .delete("/api/comments/tomato")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
