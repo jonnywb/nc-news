@@ -1,16 +1,33 @@
 const db = require("../db/connection");
 
-exports.selectComments = (article_id) => {
+exports.selectComments = (article_id, limit, p) => {
   const queryValues = [];
 
   let baseQuery = "SELECT * FROM comments ";
 
+  // WHERE -> filter by article
   if (article_id) {
     queryValues.push(article_id);
     baseQuery += "WHERE article_id = $1 ";
   }
 
-  baseQuery += "ORDER BY created_at DESC";
+  // ORDER BY
+  baseQuery += "ORDER BY created_at DESC ";
+
+  // LIMIT
+  limit = limit || 10;
+  if (!Number(limit) || limit > 10) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  // OFFSET
+  p = p || 1;
+  if (!Number(p)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  let offset = limit * (p - 1);
+
+  baseQuery += `LIMIT ${limit} OFFSET ${offset};`;
 
   return db.query(baseQuery + ";", queryValues).then(({ rows }) => {
     return rows;

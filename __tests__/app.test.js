@@ -160,7 +160,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.length).toBe(11);
+        expect(body.comments.length).toBe(10);
       });
   });
 
@@ -740,6 +740,53 @@ describe("GET /api/articles >>> LIMIT, PAGE", () => {
   test("should return 400 Bad Request if limit is above 10", () => {
     return request(app)
       .get("/api/articles?limit=30")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments >>> LIMIT, PAGE", () => {
+  test("should return 10 comments (by default) on page 1", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(10);
+      });
+  });
+
+  test("should return 3 articles on page 2 with limit set to 8", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=8&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(3);
+      });
+  });
+
+  test("should return 400 Bad Request if limit is not a number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=POTATO&p=3")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 400 Bad Request if p is not a number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=boilEmMashEm")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("should return 400 Bad Request if limit is above 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=30")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");

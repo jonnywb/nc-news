@@ -4,8 +4,9 @@ const { checkExists } = require("../utils/utils");
 
 exports.getComByArtId = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit, p } = req.query;
 
-  const articlePromises = [selectComments(article_id)];
+  const articlePromises = [selectComments(article_id, limit, p)];
 
   if (article_id) {
     articlePromises.push(selectArticleById(article_id));
