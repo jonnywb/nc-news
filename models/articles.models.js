@@ -6,17 +6,17 @@ exports.selectArticles = (query) => {
   let baseQuery =
     "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
 
+  const dbQueries = [];
   //SUBQUERY WHERE
   if (topic) {
-    baseQuery += "WHERE topic = $1 ";
+    dbQueries.push(topic);
+    baseQuery += `WHERE topic = $${dbQueries.length} `;
   }
 
   baseQuery += ") AS subquery ON true ";
 
   // WHERE
-  const dbQueries = [];
   if (topic) {
-    dbQueries.push(topic);
     baseQuery += "WHERE topic = $1 ";
   }
 
