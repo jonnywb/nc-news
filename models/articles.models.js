@@ -30,17 +30,18 @@ exports.selectArticles = (query, totalCount) => {
 
   // ASC / DESC (ORDER)
   order = order || "desc";
-  if (order === "asc") {
-    baseQuery += "ASC ";
-  } else if (order === "desc") {
-    baseQuery += "DESC ";
+  const validOrder = ["asc", "desc"];
+  if (validOrder.includes(order)) {
+    baseQuery += `${order} `;
   } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
   // LIMIT
   limit = limit || 10;
-  if (!Number(limit) || limit > 10) {
+  if (Number(limit) && limit <= 10) {
+    dbQueries.push(limit);
+  } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
@@ -50,12 +51,14 @@ exports.selectArticles = (query, totalCount) => {
   if (totalCount === 0) {
     max_page_count = 1;
   }
-  if (!Number(p) || p > max_page_count) {
+  if (Number(p) && p <= max_page_count) {
+    let offset = limit * (p - 1);
+    dbQueries.push(offset);
+  } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-  let offset = limit * (p - 1);
 
-  baseQuery += `LIMIT ${limit} OFFSET ${offset};`;
+  baseQuery += `LIMIT $${dbQueries.length - 1} OFFSET $${dbQueries.length};`;
 
   return db.query(baseQuery, dbQueries).then(({ rows }) => {
     return { articles: rows, total_count: totalCount };
