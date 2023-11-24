@@ -1,27 +1,19 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (query) => {
+exports.selectArticles = (query, totalCount) => {
   let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
-  let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
-
-  const dbQueries = [];
-  //SUBQUERY WHERE
-  if (topic) {
-    dbQueries.push(topic);
-    baseQuery += `WHERE topic = $${dbQueries.length} `;
-  }
-
-  baseQuery += ") AS subquery ON true ";
+  let baseQuery = "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
   // WHERE
+  const dbQueries = [];
   if (topic) {
+    dbQueries.push(topic);
     baseQuery += "WHERE topic = $1 ";
   }
 
   // GROUP BY
-  baseQuery += "GROUP BY articles.article_id, subquery.total_count ";
+  baseQuery += "GROUP BY articles.article_id ";
 
   //ORDER BY (sort_by)
   sort_by = sort_by || "created_at";
@@ -37,31 +29,38 @@ exports.selectArticles = (query) => {
 
   // ASC / DESC (ORDER)
   order = order || "desc";
-  if (order === "asc") {
-    baseQuery += "ASC ";
-  } else if (order === "desc") {
-    baseQuery += "DESC ";
+  const validOrder = ["asc", "desc"];
+  if (validOrder.includes(order)) {
+    baseQuery += `${order} `;
   } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
   // LIMIT
   limit = limit || 10;
-  if (!Number(limit) || limit > 10) {
+  if (Number(limit) && limit <= 10) {
+    dbQueries.push(limit);
+  } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
   // OFFSET
   p = p || 1;
-  if (!Number(p)) {
+  max_page_count = Math.ceil(totalCount / limit);
+  if (totalCount === 0) {
+    max_page_count = 1;
+  }
+  if (Number(p) && p <= max_page_count) {
+    let offset = limit * (p - 1);
+    dbQueries.push(offset);
+  } else {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-  let offset = limit * (p - 1);
 
-  baseQuery += `LIMIT ${limit} OFFSET ${offset};`;
+  baseQuery += `LIMIT $${dbQueries.length - 1} OFFSET $${dbQueries.length};`;
 
   return db.query(baseQuery, dbQueries).then(({ rows }) => {
-    return rows;
+    return { articles: rows, total_count: totalCount };
   });
 };
 
@@ -122,5 +121,19 @@ exports.deleteArticle = (article_id) => {
     if (!rows.length) {
       return Promise.reject({ status: 404, msg: "Not Found" });
     }
+  });
+};
+
+exports.selectTotalCount = (topic) => {
+  let baseQuery = "SELECT COUNT(*) AS total_count FROM articles ";
+
+  const queryArr = [];
+  if (topic) {
+    queryArr.push(topic);
+    baseQuery += "WHERE topic = $1 ";
+  }
+
+  return db.query(baseQuery, queryArr).then(({ rows }) => {
+    return +rows[0].total_count;
   });
 };

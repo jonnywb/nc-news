@@ -683,6 +683,7 @@ describe("GET /api/articles >>> LIMIT, PAGE", () => {
       .get("/api/articles?p=1")
       .expect(200)
       .then(({ body }) => {
+        expect(body.total_count).toBe(13);
         expect(body.articles.length).toBe(10);
         body.articles.forEach((article) => {
           expect(article).toMatchObject({
@@ -694,7 +695,6 @@ describe("GET /api/articles >>> LIMIT, PAGE", () => {
             article_img_url: expect.any(String),
             votes: expect.any(Number),
             comment_count: expect.any(String),
-            total_count: "13",
           });
         });
       });
@@ -724,7 +724,7 @@ describe("GET /api/articles >>> LIMIT, PAGE", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles.length).toBe(3);
-        expect(body.articles[0].total_count).toBe("12");
+        expect(body.total_count).toBe(12);
       });
   });
 
@@ -855,6 +855,17 @@ describe("DELETE /api/articles/:article", () => {
   test("should return 400 bad request if bad article_id", () => {
     return request(app)
       .delete("/api/comments/tomato")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles >> MAX PAGE COUNT", () => {
+  test("should not allow to move past max number of pages, return 400 Bad Request", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=3")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
