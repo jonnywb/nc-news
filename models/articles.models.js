@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (query) => {
+exports.selectArticles = (query, totalCount) => {
   let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
   let baseQuery =
@@ -46,7 +46,11 @@ exports.selectArticles = (query) => {
 
   // OFFSET
   p = p || 1;
-  if (!Number(p)) {
+  max_page_count = Math.ceil(totalCount / limit);
+  if (totalCount === 0) {
+    max_page_count = 1;
+  }
+  if (!Number(p) || p > max_page_count) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   let offset = limit * (p - 1);
@@ -54,7 +58,7 @@ exports.selectArticles = (query) => {
   baseQuery += `LIMIT ${limit} OFFSET ${offset};`;
 
   return db.query(baseQuery, dbQueries).then(({ rows }) => {
-    return rows;
+    return { articles: rows, total_count: totalCount };
   });
 };
 
