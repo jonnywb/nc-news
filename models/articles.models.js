@@ -4,7 +4,7 @@ exports.selectArticles = (query) => {
   let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
   let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, COUNT(articles.article_id), subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
+    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count, subquery.total_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id LEFT JOIN (SELECT COUNT(*) AS total_count FROM articles ";
 
   //SUBQUERY WHERE
   if (topic) {
