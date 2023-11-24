@@ -709,6 +709,15 @@ describe("GET /api/articles >>> LIMIT, PAGE", () => {
       });
   });
 
+  test("should return article_id 4 on page two if limit set to 3", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc&limit=3&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).toBe(4);
+      });
+  });
+
   test("should return 3 articles on page 4 with limit set to 3 WITH correct total_count (12)", () => {
     return request(app)
       .get("/api/articles?topic=mitch&limit=3&page=4")
