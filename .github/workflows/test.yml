@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Test utils
-        run: npm run test-utils
+        run: npm test utils
   test-integration:
     needs: test-utils
     runs-on: ubuntu-latest
