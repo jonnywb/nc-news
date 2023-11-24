@@ -852,3 +852,14 @@ describe("DELETE /api/articles/:article", () => {
       });
   });
 });
+
+describe("GET /api/articles >> MAX PAGE COUNT", () => {
+  test("should not allow to move past max number of pages, return 400 Bad Request", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=3")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
