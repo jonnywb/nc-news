@@ -32,7 +32,7 @@ jobs:
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1.0.0
         with:
-          postgresql db: test_db 
+          postgresql db: nc_news_test 
           postgresql user: test_user 
           postgresql password: password
       - name: Test app
