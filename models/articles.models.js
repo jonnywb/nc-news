@@ -3,8 +3,7 @@ const db = require("../db/connection");
 exports.selectArticles = (query, totalCount) => {
   let { topic, sort_by, order, p, limit } = query;
   // SELECT FROM JOIN ON
-  let baseQuery =
-    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
+  let baseQuery = "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
   // WHERE
   const dbQueries = [];
