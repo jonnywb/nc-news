@@ -36,4 +36,4 @@ jobs:
           postgresql user: test_user 
           postgresql password: password
       - name: Test app
-        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=password npm run test-app
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=password npm test app
