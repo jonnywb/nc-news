@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "bc-nc-news",
   "main": "listen.js",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
