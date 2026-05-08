@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
-app.all("/{*splat}", handle404);
+app.all("*", handle404);
 
 app.use(handlePsqlError);
 app.use(handleCustomError);
