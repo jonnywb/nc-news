@@ -1,7 +1,5 @@
 # "FORUM FORGE"
 
-(The name's a WIP...)
-
 ## A.K.A. Jonathan's News API
 
 **Welcome** to my nc-news portfolio project.
