@@ -4,7 +4,7 @@
 
 **Welcome** to my nc-news portfolio project.
 
-This project is an attempt to recreate a social news webiste / forum, such as Digg or Reddit where content is socially curated by site users through voting.
+This project is an attempt to recreate a social news website / forum, such as Digg or Reddit where content is socially curated by site users through voting.
 
 Currently the project is at the back-end phase of development, and as such there is no front-end section to the website, but this should be available, soon.
 
